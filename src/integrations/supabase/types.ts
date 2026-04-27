@@ -14,16 +14,244 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contributions: {
+        Row: {
+          amount: number
+          created_at: string
+          cycle_month: number
+          group_id: string
+          id: string
+          member_id: string
+          paid: boolean
+          paid_at: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          cycle_month: number
+          group_id: string
+          id?: string
+          member_id: string
+          paid?: boolean
+          paid_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          cycle_month?: number
+          group_id?: string
+          id?: string
+          member_id?: string
+          paid?: boolean
+          paid_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contributions_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contributions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          contribution_amount: number
+          created_at: string
+          currency: string
+          cycle_length: number
+          id: string
+          name: string
+          owner_id: string
+          start_month: string
+          status: Database["public"]["Enums"]["group_status"]
+          updated_at: string
+        }
+        Insert: {
+          contribution_amount: number
+          created_at?: string
+          currency?: string
+          cycle_length: number
+          id?: string
+          name: string
+          owner_id: string
+          start_month?: string
+          status?: Database["public"]["Enums"]["group_status"]
+          updated_at?: string
+        }
+        Update: {
+          contribution_amount?: number
+          created_at?: string
+          currency?: string
+          cycle_length?: number
+          id?: string
+          name?: string
+          owner_id?: string
+          start_month?: string
+          status?: Database["public"]["Enums"]["group_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      members: {
+        Row: {
+          created_at: string
+          group_id: string
+          id: string
+          name: string
+          payout_position: number
+          payout_received: boolean
+          payout_received_at: string | null
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          id?: string
+          name: string
+          payout_position: number
+          payout_received?: boolean
+          payout_received_at?: string | null
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          id?: string
+          name?: string
+          payout_position?: number
+          payout_received?: boolean
+          payout_received_at?: string | null
+          phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payouts: {
+        Row: {
+          amount: number
+          created_at: string
+          cycle_month: number
+          group_id: string
+          id: string
+          member_id: string
+          released: boolean
+          released_at: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          cycle_month: number
+          group_id: string
+          id?: string
+          member_id: string
+          released?: boolean
+          released_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          cycle_month?: number
+          group_id?: string
+          id?: string
+          member_id?: string
+          released?: boolean
+          released_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payouts_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payouts_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_group_owner: { Args: { _group_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "member"
+      group_status: "draft" | "active" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +378,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "member"],
+      group_status: ["draft", "active", "completed"],
+    },
   },
 } as const
