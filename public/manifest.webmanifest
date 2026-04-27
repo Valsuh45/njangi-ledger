@@ -1,0 +1,25 @@
+{
+  "name": "Njangi — Rotating Savings",
+  "short_name": "Njangi",
+  "description": "Manage your rotating savings group: members, contributions, and payouts.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c2340",
+  "theme_color": "#0c2340",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
