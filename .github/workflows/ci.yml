@@ -22,7 +22,7 @@ jobs:
   # Install dependencies (shared across jobs)
   # ──────────────────────────────────────────────
   install:
-    name: 📦 Install
+    name: Install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
   # Lint — ESLint
   # ──────────────────────────────────────────────
   lint:
-    name: 🧹 Lint
+    name: Lint
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -64,7 +64,7 @@ jobs:
   # Type-check — TypeScript
   # ──────────────────────────────────────────────
   typecheck:
-    name: 🔍 Typecheck
+    name: Typecheck
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -85,7 +85,7 @@ jobs:
   # Build — Vite production build
   # ──────────────────────────────────────────────
   build:
-    name: 🏗️ Build
+    name: Build
     needs: install
     runs-on: ubuntu-latest
     steps:
@@ -106,7 +106,7 @@ jobs:
   # Test — Vitest
   # ──────────────────────────────────────────────
   test:
-    name: 🧪 Test
+    name: Test
     needs: install
     runs-on: ubuntu-latest
     steps:
