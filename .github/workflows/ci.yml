@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+  # Dummy values so Vite can resolve import.meta.env at build-time.
+  # These are NOT used at runtime; they just prevent the build from failing.
+  VITE_SUPABASE_URL: "https://placeholder.supabase.co"
+  VITE_SUPABASE_PUBLISHABLE_KEY: "placeholder-key"
+
+jobs:
+  # ──────────────────────────────────────────────
+  # Install dependencies (shared across jobs)
+  # ──────────────────────────────────────────────
+  install:
+    name: 📦 Install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+  # ──────────────────────────────────────────────
+  # Lint — ESLint
+  # ──────────────────────────────────────────────
+  lint:
+    name: 🧹 Lint
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - run: npm run lint
+
+  # ──────────────────────────────────────────────
+  # Type-check — TypeScript
+  # ──────────────────────────────────────────────
+  typecheck:
+    name: 🔍 Typecheck
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - run: npm run typecheck
+
+  # ──────────────────────────────────────────────
+  # Build — Vite production build
+  # ──────────────────────────────────────────────
+  build:
+    name: 🏗️ Build
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - run: npm run build
+
+  # ──────────────────────────────────────────────
+  # Test — Vitest
+  # ──────────────────────────────────────────────
+  test:
+    name: 🧪 Test
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - run: npm run test
